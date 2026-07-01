@@ -1,10 +1,29 @@
-FROM n8n/n8n:latest
+FROM node:18-alpine
 
-EXPOSE 3000
+# Establecer directorio de trabajo
+WORKDIR /app
 
+# Actualizar npm a la última versión
+RUN npm install -g npm@latest
+
+# Instalar N8N
+RUN npm install -g n8n
+
+# Crear directorios necesarios
+RUN mkdir -p /root/.n8n
+
+# Variables de entorno
 ENV N8N_HOST=0.0.0.0
 ENV N8N_PORT=3000
 ENV N8N_PROTOCOL=https
 ENV NODE_ENV=production
 
+# Exponer puerto
+EXPOSE 3000
+
+# Healthcheck (importante para Render)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/healthz', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+# Comando para iniciar N8N
 CMD ["n8n", "start"]
