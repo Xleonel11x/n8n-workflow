@@ -1,15 +1,10 @@
-FROM node:18-alpine
+FROM n8n/n8n:latest
 
-WORKDIR /app
-
-# Instalar N8N globalmente
-RUN npm install -g n8n
-
-# Crear directorios necesarios
-RUN mkdir -p /root/.n8n
-
-# Exponer el puerto
 EXPOSE 3000
 
-# Comando para iniciar N8N
+ENV N8N_HOST=0.0.0.0
+ENV N8N_PORT=3000
+ENV N8N_PROTOCOL=https
+ENV NODE_ENV=production
+
 CMD ["n8n", "start"]
